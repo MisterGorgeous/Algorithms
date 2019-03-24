@@ -3,26 +3,24 @@ import edu.princeton.cs.algs4.StdStats;
 
 public class PercolationStats {
 
-    private Percolation percolation;
-    private int numberOfOpenSites[];
-    private int n;
-    private int trials;
+    private final double numberOfOpenSites[];
+    private final int trials;
 
 
     public PercolationStats(int n, int trials) {
         validate(n, trials);
-        this.n = n;
         this.trials = trials;
-        numberOfOpenSites = new int[trials];
+        numberOfOpenSites = new double[trials];
+        double numberOfSites = n * n;
 
         for (int i = 0; i < trials; i++) {
-            percolation = new Percolation(n);
+            Percolation percolation = new Percolation(n);
             while (!percolation.percolates()) {
                 int row = StdRandom.uniform(1, n + 1);
                 int col = StdRandom.uniform(1, n + 1);
                 percolation.open(row, col);
             }
-            numberOfOpenSites[i] = percolation.numberOfOpenSites();
+            numberOfOpenSites[i] = percolation.numberOfOpenSites() / numberOfSites;
         }
 
     }// perform trials independent experiments on an n-by-n grid
@@ -33,21 +31,22 @@ public class PercolationStats {
     }/// sample mean of percolation threshold
 
     public double stddev() {
-        return StdStats.stddev(numberOfOpenSites);
+
+        return trials == 1 ? Double.NaN : StdStats.stddev(numberOfOpenSites);
     }/// sample standard deviation of percolation threshold
 
     public double confidenceLo() {
-        return mean() - (1.96 * Math.sqrt(stddev()) / Math.sqrt(trials));
+        return mean() - (1.96 * stddev() / Math.sqrt(trials));
     }/// low  endpoint of 95% confidence interval
 
     public double confidenceHi() {
-        return mean() + (1.96 * Math.sqrt(stddev()) / Math.sqrt(trials));
+        return mean() + (1.96 * stddev() / Math.sqrt(trials));
     }/// high endpoint of 95% confidence interval
 
 
     public static void main(String[] args) {
-        int n = Integer.valueOf(args[0]);// input file
-        int T = Integer.valueOf(args[1]);// input file
+        int n = new Integer(args[0]);// input file
+        int T = new Integer(args[1]);// input file
 
         PercolationStats percolationStats = new PercolationStats(n, T);
 

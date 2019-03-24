@@ -2,22 +2,25 @@ import edu.princeton.cs.algs4.WeightedQuickUnionUF;
 
 public class Percolation {
 
-    private WeightedQuickUnionUF uf;
+    private final WeightedQuickUnionUF uf;
     private int[][] siteState;
     private int numberOfOpenSites;
-    private int size;
+    private final int size;
 
     public Percolation(int n) {
         this.size = n;
         if (this.size <= 0) {
             throw new IllegalArgumentException("Index is below zero");
         }
+        if (n == 1) {
+            uf = new WeightedQuickUnionUF(size);
+        } else {
+            uf = new WeightedQuickUnionUF((size + 2) * size);
 
-        uf = new WeightedQuickUnionUF((size + 2) * size);
-
-        for (int i = 0; i < size; ++i) {
-            uf.union(i + size, 0);
-            uf.union(size * size + i, size * (size + 2) - 1);
+            for (int i = 0; i < size; ++i) {
+                uf.union(i + size, 0);
+                uf.union(size * size + i, size * (size + 2) - 1);
+            }
         }
 
         siteState = new int[size][size];
